@@ -402,15 +402,20 @@
   resolved "https://registry.npmjs.org/@stencil/core/-/core-4.18.3.tgz#8568ffe3db307ea36aaacf82813cfed9ae319388"
   integrity sha512-8yoG5AFQYEPocVtuoc5kvRS0Hku0MoDWDUpADRaXPVHsOFLmxR16LJENj25ucCz5GEfeTGQ/tCE8JAypPmr/fQ==
 
-"@szchy/utils@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/@szchy/utils/-/utils-1.0.3.tgz#dabc812e45eec60cac6b6c734d08f4b9b3b31569"
-  integrity sha512-8uWkVHUnV7DsCWy1MU9pSu3CrxJMjd916nXrrZsimB2WOJPgbOzUMz/ioCfgbF1pPauHhFOYgLGZVnhVNpiQzA==
+"@szchy/utils@^1.0.23":
+  version "1.0.23"
+  resolved "https://registry.npmjs.org/@szchy/utils/-/utils-1.0.23.tgz#5d02009aac0b2c3e48d769db744a76c98a1dc182"
+  integrity sha512-ZEDsZXYdHzopPmW1D4bEjchkdzdVpggQueMbzn3u3gIT1F2r1Mj0rr7CQs9N6aa8bR6uSBQgGiCZorzNYI1iEQ==
   dependencies:
     "@arcgis/core" "^4.30.2"
     axios "^1.7.2"
     element-plus "^2.7.6"
     lodash-es "^4.17.21"
+
+"@tweakpane/core@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.npmjs.org/@tweakpane/core/-/core-2.0.4.tgz#8c896d49540c522d1bc503d3a2d3fde8715e4e0a"
+  integrity sha512-0P3xcmvjBr8AmqMOEDNYIbkiaPwvQPkj8VeJX+8ZYkpRgWWbNp1HLbld0MDI0WJHdom89osH3MmCDLnWEXKI2w==
 
 "@types/color-convert@*":
   version "2.0.3"

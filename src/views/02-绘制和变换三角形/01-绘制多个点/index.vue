@@ -1,19 +1,20 @@
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import * as twgl from "twgl.js";
-import { initCanvas } from "@/utils/webgl";
-import FSHADER_SOURCE from "./fragmentShader.fs";
 import VSHADER_SOURCE from "./vertexShader.vs";
+import FSHADER_SOURCE from "./fragmentShader.fs";
+import { initWebGL } from "@/utils/webgl";
 
 onMounted(() => {
-  const gl = initCanvas();
-  const programInfo = twgl.createProgramInfo(gl, [VSHADER_SOURCE, FSHADER_SOURCE]);
-  gl.useProgram(programInfo.program);
-  const arrays = {
-    a_Position: { numComponents: 2, data: [0.5, -0.5, 0, 0.5, -0.5, -0.5] },
-    a_PointSize: { numComponents: 1, data: [5, 10, 15] },
+  // 初始化webgl
+  const { gl, programInfo } = initWebGL(VSHADER_SOURCE, FSHADER_SOURCE);
+  // 顶点坐标
+  let arrays: twgl.Arrays = {
+    a_Position: { numComponents: 2, data: [0, 0, 0.4, 0.4, -0.4, 0] },
   };
+  // 创建缓冲区信息
   const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+  // 设置缓冲区和属性
   twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
   // 设置清除颜色
   gl.clearColor(0, 0, 0, 1.0);
@@ -22,6 +23,6 @@ onMounted(() => {
 });
 </script>
 <template>
-  <canvas id="canvas"></canvas>
+  <canvas></canvas>
 </template>
 <style lang="scss" scoped></style>

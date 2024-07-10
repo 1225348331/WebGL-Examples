@@ -2,6 +2,6 @@
   import { ref } from "vue";
 </script>
 <template>
-  <div></div>
+  <div>投影三角形</div>
 </template>
 <style lang="scss" scoped></style>

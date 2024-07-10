@@ -9,9 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@szchy/utils": "^1.0.3",
+    "@szchy/utils": "^1.0.23",
     "ant-design-vue": "^4.2.3",
     "gl-matrix": "^3.4.3",
+    "lodash-es": "^4.17.21",
     "normalize.css": "^8.0.1",
     "sass": "^1.77.6",
     "tweakpane": "^4.0.4",
@@ -21,6 +22,7 @@
     "vue-router": "^4.4.0"
   },
   "devDependencies": {
+    "@tweakpane/core": "^2.0.4",
     "@types/node": "^20.14.9",
     "@vitejs/plugin-vue": "^5.0.5",
     "typescript": "^5.2.2",

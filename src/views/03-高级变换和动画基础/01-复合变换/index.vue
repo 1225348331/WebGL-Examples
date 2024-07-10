@@ -2,6 +2,6 @@
   import { ref } from "vue";
 </script>
 <template>
-  <div>点击绘制点</div>
+  <div>动画效果</div>
 </template>
 <style lang="scss" scoped></style>

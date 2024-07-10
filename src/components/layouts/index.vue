@@ -40,10 +40,10 @@ const handleClick: MenuProps["onClick"] = (e) => {
       <a-breadcrumb style="margin: 16px 0">
         <a-breadcrumb-item v-for="item in currentRouteName">{{ item }}</a-breadcrumb-item>
       </a-breadcrumb>
-      <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0 }">
+      <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, borderRadius: '6px' }">
         <div class="canvas-container">
           <router-view v-slot="{ Component }">
-            <transition name="fade-transform">
+            <transition name="fade-transform" mode="out-in">
               <component :is="Component" />
             </transition>
           </router-view>
