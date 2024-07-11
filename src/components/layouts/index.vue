@@ -41,7 +41,7 @@ const handleClick: MenuProps["onClick"] = (e) => {
         <a-breadcrumb-item v-for="item in currentRouteName">{{ item }}</a-breadcrumb-item>
       </a-breadcrumb>
       <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, borderRadius: '6px' }">
-        <div class="canvas-container">
+        <div class="canvas-container" style="position: relative;">
           <router-view v-slot="{ Component }">
             <transition name="fade-transform" mode="out-in">
               <component :is="Component" />

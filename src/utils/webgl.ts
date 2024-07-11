@@ -9,7 +9,8 @@ const initWebGL = (vs: string, fs: string) => {
   const container = document.querySelector(".ant-layout-content") as HTMLElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
   const { width, height } = container.getBoundingClientRect();
-  canvas.width = width - 48;
+  // canvas.width = width - 48;
+  canvas.width = height - 48;
   canvas.height = height - 48;
   canvas.style.borderRadius = "6px";
   const gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
@@ -17,6 +18,8 @@ const initWebGL = (vs: string, fs: string) => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs]);
   // 使用program
   gl.useProgram(programInfo.program);
+  twgl.resizeCanvasToDisplaySize(canvas)
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   // 设置清除颜色
   gl.clearColor(0, 0, 0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

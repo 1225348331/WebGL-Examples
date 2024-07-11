@@ -10,41 +10,14 @@ import { Pane } from "tweakpane";
 let pane = new Pane();
 // 绑定参数
 let params = {
-  x: 0,
-  y: 0,
   theta: 0,
-  scaleX: 1,
-  scaleY: 1,
 };
-pane.addBinding(params, "x", {
-  min: -0.5,
-  max: 0.5,
-  step: 0.01,
-  label: "x轴平移",
-});
-pane.addBinding(params, "y", {
-  min: -0.5,
-  max: 0.5,
-  step: 0.01,
-  label: "y轴平移",
-});
+// 绑定旋转角度
 pane.addBinding(params, "theta", {
-  min: -180,
-  max: 180,
+  min: -360,
+  max: 360,
   step: 1,
   label: "旋转角度",
-});
-pane.addBinding(params, "scaleX", {
-  min: 0.5,
-  max: 2,
-  step: 0.1,
-  label: "X轴缩放",
-});
-pane.addBinding(params, "scaleY", {
-  min: 0.5,
-  max: 2,
-  step: 0.1,
-  label: "Y轴缩放",
 });
 
 onMounted(() => {
@@ -54,7 +27,11 @@ onMounted(() => {
   let arrays: twgl.Arrays = {
     a_Position: {
       numComponents: 2,
-      data: [0.5, -0.8, 0.5, 0.5, 0.2, 0.5],
+      data: [0.2, 0, 0.2, 1, 0.8, 0],
+    },
+    a_CenterPosition: {
+      numComponents: 2,
+      data: [0.2, 0, 0.2, 0, 0.2, 0],
     },
   };
   // 设置uniform变量
@@ -71,15 +48,9 @@ onMounted(() => {
   twgl.drawBufferInfo(gl, bufferInfo, gl.TRIANGLES);
   // 模型变换监听
   pane.on("change", () => {
-    const modelMatrix = mat4.create();
-    // 平移矩阵
-    mat4.translate(modelMatrix, modelMatrix, [params.x, params.y, 0]);
-    // 旋转矩阵
-    mat4.rotateZ(modelMatrix, modelMatrix, (params.theta * Math.PI) / 180.0);
-    // 缩放矩阵
-    mat4.scale(modelMatrix, modelMatrix, [params.scaleX, params.scaleY, 1]);
+    // 设置旋转矩阵
+    mat4.rotateZ(uniforms.u_ModelMatrix, mat4.create(), (params.theta * Math.PI) / 180.0);
     // 设置uniform变量
-    uniforms.u_ModelMatrix = modelMatrix;
     twgl.setUniforms(programInfo, uniforms);
     // 设置清除颜色
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -90,8 +61,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  pane.dispose()
-})
+  pane.dispose();
+});
 </script>
 <template>
   <canvas></canvas>
