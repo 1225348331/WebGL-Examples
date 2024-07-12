@@ -17,6 +17,8 @@ const openKeys = ref<string[]>([currentRouteName.value[0]]);
 const selectedKeys = ref<string[]>([currentRouteName.value[1]]);
 /** 菜单栏点击事件 */
 const handleClick: MenuProps["onClick"] = (e) => {
+  // 只展开当前选中的菜单项
+  openKeys.value = [(e.keyPath as string[])[0]];
   router.push({
     path: encodeURI(e.keyPath!.join("-")),
   });
@@ -41,13 +43,11 @@ const handleClick: MenuProps["onClick"] = (e) => {
         <a-breadcrumb-item v-for="item in currentRouteName">{{ item }}</a-breadcrumb-item>
       </a-breadcrumb>
       <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, borderRadius: '6px' }">
-        <div class="canvas-container" style="position: relative;">
-          <router-view v-slot="{ Component }">
-            <transition name="fade-transform" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </router-view>
-        </div>
+        <router-view v-slot="{ Component }">
+          <transition name="fade-transform" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </a-layout-content>
     </a-layout>
   </a-layout>

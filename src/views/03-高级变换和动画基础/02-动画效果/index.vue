@@ -27,7 +27,7 @@ let arrays: twgl.Arrays = {
     data: centerPosition,
   },
 };
-// 视图矩阵uniform变量
+// 模型矩阵uniform变量
 let uniforms = {
   u_ModelMatrix: mat4.create(),
 };
