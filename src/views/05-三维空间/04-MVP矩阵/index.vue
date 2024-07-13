@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { initWebGL } from "@/utils/webgl";
 import VSHADER_SOURCE from "./vertexShader.vs";
 import FSHADER_SOURCE from "./fragmentShader.fs";
@@ -146,6 +146,10 @@ onMounted(() => {
     mat4.perspective(uniforms.u_ProjMatrix, (params.fov * Math.PI) / 180, params.aspect, params.near, params.far);
     draw(gl, programInfo);
   });
+});
+
+onUnmounted(() => {
+  pane.dispose();
 });
 </script>
 <template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { initWebGL } from "@/utils/webgl";
 import VSHADER_SOURCE from "./vertexShader.vs";
 import FSHADER_SOURCE from "./fragmentShader.fs";
@@ -98,6 +98,10 @@ onMounted(() => {
     draw(gl, programInfo);
   });
 });
+
+onUnmounted(() => {
+  pane.dispose()
+})
 </script>
 <template>
   <canvas></canvas>

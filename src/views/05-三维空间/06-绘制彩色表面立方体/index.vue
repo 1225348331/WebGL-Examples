@@ -1,0 +1,51 @@
+<script lang="ts" setup>
+import { onMounted } from "vue";
+import { initWebGL } from "@/utils/webgl";
+import * as twgl from "twgl.js";
+import FSHADER_SOURCE from "./fragmentShader.fs";
+import VSHADER_SOURCE from "./vertexShader.vs";
+import { mat4, vec3 } from "gl-matrix";
+
+const arrays: twgl.Arrays = {
+  // 顶点坐标
+  a_Position: {
+    numComponents: 3,
+    data: [
+      1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0,
+      -1.0, -1.0,
+    ],
+  },
+  // 顶点颜色
+  a_Color: {
+    numComponents: 3,
+    data: [
+      1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+    ],
+  },
+  // 绘制索引
+  indices: [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 1, 1, 6, 7, 1, 7, 2, 7, 4, 3, 7, 3, 2, 4, 7, 6, 4, 6, 5],
+};
+// mvp矩阵Uniform变量
+const uniforms = {
+  u_ModelMatrix: mat4.create(),
+  u_ViewMatrix: mat4.lookAt(mat4.create(), vec3.fromValues(3, 3, 7), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0)),
+  u_ProjMatrix: mat4.perspective(mat4.create(), (60 * Math.PI) / 180, 1, 2, 30),
+};
+
+onMounted(() => {
+  // 初始化webgl
+  const { gl, programInfo } = initWebGL(VSHADER_SOURCE, FSHADER_SOURCE);
+  // 创建缓冲区
+  const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+  // 设置缓冲区和属性信息
+  twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+  // 设置uniform信息
+  twgl.setUniforms(programInfo, uniforms);
+  // 绘制立方体
+  twgl.drawBufferInfo(gl, bufferInfo, gl.TRIANGLES);
+});
+</script>
+<template>
+  <canvas></canvas>
+</template>
+<style lang="scss" scoped></style>
