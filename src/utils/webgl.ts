@@ -22,14 +22,14 @@ const initWebGL = (vs: string, fs: string) => {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   // 设置清除颜色
 
-  gl.clearColor(0, 0, 0, 1.0);
-  gl.enable(gl.DEPTH_TEST)
+  gl.clearColor(0, 0, 0, 0.0);
+  gl.enable(gl.DEPTH_TEST);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   // 清除GL,并设置清除颜色
   const clearGL = () => {
-    gl.clearColor(0, 0, 0, 1.0);
-    gl.enable(gl.DEPTH_TEST)
+    gl.clearColor(0, 0, 0, 0.0);
+    gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   };
 
@@ -38,7 +38,7 @@ const initWebGL = (vs: string, fs: string) => {
     gl.getExtension("WEBGL_lose_context")?.loseContext();
   });
 
-  return { gl, programInfo, clearGL };
+  return { gl, programInfo, clearGL, width: canvas.width, height: canvas.height };
 };
 
 export { initWebGL };

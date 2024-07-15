@@ -11,18 +11,12 @@ const pane = new Pane({
 });
 let params = {
   speed: 20,
-  number: 6,
   width: 0.3,
 };
 pane.addBinding(params, "speed", {
   label: "扩散速度",
   min: 5,
   max: 50,
-});
-pane.addBinding(params, "number", {
-  label: "波纹数量",
-  min: 2,
-  max: 20,
 });
 pane.addBinding(params, "width", {
   label: "波纹宽度",
@@ -46,7 +40,6 @@ onMounted(() => {
     u_Resolution: width,
     u_Time: 0,
     u_Speed: params.speed,
-    u_Number: params.number,
     u_Width: params.width,
   };
   // 绘制函数
@@ -58,7 +51,8 @@ onMounted(() => {
   };
   // 帧动画函数
   const tick = () => {
-    uniforms.u_Time += 1 / 50;
+    uniforms.u_Time += 0.1;
+    if (uniforms.u_Time * uniforms.u_Speed > width) uniforms.u_Time = 0.0;
     clearGL();
     draw();
     requestAnimationFrame(tick);
@@ -67,7 +61,6 @@ onMounted(() => {
   // 面板监听事件
   pane.on("change", () => {
     uniforms.u_Speed = params.speed;
-    uniforms.u_Number = params.number;
     uniforms.u_Width = params.width;
   });
 });
