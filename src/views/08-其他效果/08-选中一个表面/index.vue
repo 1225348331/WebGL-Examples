@@ -147,6 +147,36 @@ let arrays: twgl.Arrays = {
       1.0, // v4-v7-v6-v5 back
     ],
   },
+  a_Face: {
+    numComponents: 1,
+    data: [
+      // Faces
+      1,
+      1,
+      1,
+      1, // v0-v1-v2-v3 front
+      2,
+      2,
+      2,
+      2, // v0-v3-v4-v5 right
+      3,
+      3,
+      3,
+      3, // v0-v5-v6-v1 up
+      4,
+      4,
+      4,
+      4, // v1-v6-v7-v2 left
+      5,
+      5,
+      5,
+      5, // v7-v4-v3-v2 down
+      6,
+      6,
+      6,
+      6, // v4-v7-v6-v5 back
+    ],
+  },
   indices: [
     0,
     1,
@@ -192,6 +222,7 @@ let uniforms: Uniforms = {
   u_ViewMatrix: mat4.lookAt(mat4.create(), vec3.fromValues(3, 3, 7), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0)),
   u_ProjMatrix: mat4.perspective(mat4.create(), (50 * Math.PI) / 180, 1, 2, 100),
   u_Texture: null,
+  u_PickedFace: -1,
 };
 
 const draw = (gl: WebGL2RenderingContext, programInfo: twgl.ProgramInfo) => {
@@ -214,6 +245,7 @@ onMounted(() => {
   });
   canvas.onmousedown = (e) => {
     clearGL();
+    uniforms.u_PickedFace = 0;
     draw(gl, programInfo);
     let x = e.clientX;
     let y = e.clientY;
@@ -224,9 +256,9 @@ onMounted(() => {
       // 读取像素坐标上的值
       let pixels = new Uint8Array(4);
       gl.readPixels(xCoord, yCoord, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-      if (pixels[0]) {
-        alert("物体被选中了");
-      }
+      uniforms.u_PickedFace = pixels[3];
+      draw(gl, programInfo);
+      // console.log(pixels);
     }
   };
 });

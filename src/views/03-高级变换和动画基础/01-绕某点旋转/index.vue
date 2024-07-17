@@ -40,6 +40,7 @@ onMounted(() => {
   };
   // 创建缓冲区
   const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
   // 设置缓冲区信息和属性
   twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
   // 设置uniform变量
@@ -50,10 +51,13 @@ onMounted(() => {
   pane.on("change", () => {
     // 设置旋转矩阵
     mat4.rotateZ(uniforms.u_ModelMatrix, mat4.create(), (params.theta * Math.PI) / 180.0);
+    // 创建缓冲区
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+    // 设置缓冲区信息和属性
+    twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     // 设置uniform变量
     twgl.setUniforms(programInfo, uniforms);
-    // 设置清除颜色
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    // 清除颜色缓冲区
     gl.clear(gl.COLOR_BUFFER_BIT);
     // 绘制三角形
     twgl.drawBufferInfo(gl, bufferInfo, gl.TRIANGLES);

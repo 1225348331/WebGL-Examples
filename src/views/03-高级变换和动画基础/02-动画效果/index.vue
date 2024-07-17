@@ -44,7 +44,6 @@ onMounted(() => {
   const tick = () => {
     mat4.rotateZ(uniforms.u_ModelMatrix, uniforms.u_ModelMatrix, Math.PI / 360.0);
     // 设置清除颜色
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     // 设置uniform变量
     twgl.setUniforms(programInfo, uniforms);
