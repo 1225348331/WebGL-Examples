@@ -16,9 +16,7 @@ onMounted(() => {
   const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
   // 设置缓冲区和属性
   twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
-  // 设置清除颜色
-  gl.clearColor(0, 0, 0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  // 绘制三角形
   twgl.drawBufferInfo(gl, bufferInfo, gl.TRIANGLES);
 });
 </script>

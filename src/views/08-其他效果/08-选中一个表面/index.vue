@@ -12,6 +12,7 @@ interface Uniforms {
   u_ViewMatrix: mat4;
   u_ProjMatrix: mat4;
   u_Texture: WebGLTexture | null;
+  u_PickedFace: number;
 }
 // 顶点坐标、纹理坐标、绘制索引
 let arrays: twgl.Arrays = {
@@ -178,6 +179,7 @@ let arrays: twgl.Arrays = {
     ],
   },
   indices: [
+    // Indices of the vertices
     0,
     1,
     2,
@@ -233,32 +235,33 @@ const draw = (gl: WebGL2RenderingContext, programInfo: twgl.ProgramInfo) => {
   // 设置uniform变量
   twgl.setUniforms(programInfo, uniforms);
   // 绘制立方体
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
   twgl.drawBufferInfo(gl, bufferInfo, gl.TRIANGLES);
 };
 
 onMounted(() => {
-  const { gl, programInfo, canvas, clearGL } = initWebGL(VSHADER_SOURCE, FSHADER_SOURCE);
+  const { gl, programInfo, canvas } = initWebGL(VSHADER_SOURCE, FSHADER_SOURCE);
   twgl.createTexture(gl, { src: img, flipY: 1 }, (err, tex, img) => {
     uniforms.u_Texture = tex;
     // 绘制图形
     draw(gl, programInfo);
   });
   canvas.onmousedown = (e) => {
-    clearGL();
-    uniforms.u_PickedFace = 0;
-    draw(gl, programInfo);
     let x = e.clientX;
     let y = e.clientY;
     let rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
     if (rect.left <= x && x < rect.right && rect.top <= y && y < rect.bottom) {
       let xCoord = x - rect.left;
-      let yCoord = y - rect.top;
+      let yCoord = rect.bottom - y;
       // 读取像素坐标上的值
+      uniforms.u_PickedFace = 0;
+      draw(gl, programInfo);
       let pixels = new Uint8Array(4);
       gl.readPixels(xCoord, yCoord, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      console.log(pixels[3]);
+      // 绘制选中后的状态
       uniforms.u_PickedFace = pixels[3];
       draw(gl, programInfo);
-      // console.log(pixels);
     }
   };
 });

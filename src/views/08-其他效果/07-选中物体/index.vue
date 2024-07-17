@@ -220,7 +220,7 @@ onMounted(() => {
     let rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
     if (rect.left <= x && x < rect.right && rect.top <= y && y < rect.bottom) {
       let xCoord = x - rect.left;
-      let yCoord = y - rect.top;
+      let yCoord = rect.bottom - y;
       // 读取像素坐标上的值
       let pixels = new Uint8Array(4);
       gl.readPixels(xCoord, yCoord, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);

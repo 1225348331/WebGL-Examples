@@ -35,8 +35,7 @@ onMounted(() => {
     y = (rect.height / 2 - (y - rect.top)) / (rect.height / 2); // webgl y坐标
     arrays.push([x, y]); // 将坐标存储到顶点变量中
     uniforms.push([Math.abs(x), Math.abs(y)]);
-    // 设置清除颜色
-    gl.clearColor(0, 0, 0, 1.0);
+    // 清除颜色缓冲区
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     arrays.forEach((item, index) => {
       let arributeObj: twgl.Arrays = {
