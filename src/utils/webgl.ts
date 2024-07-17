@@ -38,7 +38,7 @@ const initWebGL = (vs: string, fs: string) => {
     gl.getExtension("WEBGL_lose_context")?.loseContext();
   });
 
-  return { gl, programInfo, clearGL, width: canvas.width, height: canvas.height };
+  return { gl, programInfo, clearGL, width: canvas.width, height: canvas.height, canvas };
 };
 
 export { initWebGL };

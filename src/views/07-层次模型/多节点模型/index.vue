@@ -241,8 +241,6 @@ pane.addBinding(params, "g_joint3Angle", {
   max: 90,
 });
 
-let ANGLE_STEP = 3.0; // The increments of rotation angle (degrees)
-
 // 绘制box
 const drawBox = (gl: WebGL2RenderingContext, programInfo: twgl.ProgramInfo, width: number, height: number, depth: number) => {
   let currentMatrix = mat4.clone(uniforms.u_ModelMatrix);
