@@ -10,10 +10,10 @@
 
 ```
 # 克隆项目
-git clone https://github.com/1225348331/WebGL-Study.git
+git clone https://github.com/1225348331/WebGL-Examples.git
 
 # 进入项目目录
-cd WebGL-Study
+cd WebGL-Examples
 
 # 安装依赖(推荐使用yarn安装)
 yarn install
