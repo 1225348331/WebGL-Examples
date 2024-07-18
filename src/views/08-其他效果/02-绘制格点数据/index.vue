@@ -23,8 +23,10 @@ interface JSONData {
 }
 // 绘制
 const draw = (gl: WebGL2RenderingContext, programInfo: twgl.ProgramInfo, jsonData: JSONData) => {
+  console.time("解析数据时间");
   // 解析格点数据
   const { positionData, colorData, indices } = ParseData(jsonData.data, jsonData.row, jsonData.col);
+  console.timeEnd("解析数据时间");
   // 设置顶点数据、颜色数据、索引数据
   let arrays: twgl.Arrays | null = {
     a_Position: {

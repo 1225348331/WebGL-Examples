@@ -258,7 +258,6 @@ onMounted(() => {
       draw(gl, programInfo);
       let pixels = new Uint8Array(4);
       gl.readPixels(xCoord, yCoord, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-      console.log(pixels[3]);
       // 绘制选中后的状态
       uniforms.u_PickedFace = pixels[3];
       draw(gl, programInfo);
