@@ -13,7 +13,7 @@ out vec4 v_Color;
 
 void main() {
   gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
-  v_Position = a_Position;
-  v_Normal = normalize(a_Normal);
+  v_Position = u_ModelMatrix * a_Position;
+  v_Normal = normalize(transpose(inverse(u_ModelMatrix)) * a_Normal);
   v_Color = a_Color;
 }

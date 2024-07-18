@@ -7,21 +7,13 @@ import { onUnmounted } from "vue";
  * @param {string} fs 片元着色器
  */
 const initWebGL = (vs: string, fs: string) => {
-  const container = document.querySelector(".ant-layout-content") as HTMLElement;
-  const canvas = document.querySelector("canvas") as HTMLCanvasElement;
-  const { height } = container.getBoundingClientRect();
-  canvas.width = height - 48;
-  canvas.height = height - 48;
-  canvas.style.borderRadius = "6px";
-  const gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
+  const { gl, canvas } = getContext();
   // 创建program
   const programInfo = twgl.createProgramInfo(gl, [vs, fs]);
   // 使用program
   gl.useProgram(programInfo.program);
-  twgl.resizeCanvasToDisplaySize(canvas);
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  // 设置清除颜色
 
+  // 设置清除颜色
   gl.clearColor(0, 0, 0, 0.0);
   gl.enable(gl.DEPTH_TEST);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -39,4 +31,17 @@ const initWebGL = (vs: string, fs: string) => {
   return { gl, programInfo, clearGL, width: canvas.width, height: canvas.height, canvas };
 };
 
-export { initWebGL };
+// 获取canvas context 默认webgl2
+const getContext = () => {
+  const container = document.querySelector(".ant-layout-content") as HTMLElement;
+  const canvas = document.querySelector("canvas") as HTMLCanvasElement;
+  const { height } = container.getBoundingClientRect();
+  canvas.width = height - 48;
+  canvas.height = height - 48;
+  canvas.style.borderRadius = "6px";
+  const gl = twgl.getContext(canvas) as WebGL2RenderingContext;
+  twgl.resizeCanvasToDisplaySize(canvas);
+  return { gl, canvas };
+};
+
+export { initWebGL, getContext };
