@@ -39,7 +39,7 @@ const getContext = () => {
   canvas.width = height - 48;
   canvas.height = height - 48;
   canvas.style.borderRadius = "6px";
-  const gl = twgl.getContext(canvas) as WebGL2RenderingContext;
+  const gl = twgl.getContext(canvas, { antialias: false }) as WebGL2RenderingContext;
   twgl.resizeCanvasToDisplaySize(canvas);
   return { gl, canvas };
 };
