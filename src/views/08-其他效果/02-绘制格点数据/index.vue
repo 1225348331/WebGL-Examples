@@ -22,6 +22,7 @@ let params = {
   imgSrc: options[0].value,
   isStep: true,
   time: 0,
+  threshold: 1.0,
 };
 pane.addBlade({
   view: "list",
@@ -31,6 +32,12 @@ pane.addBlade({
 });
 pane.addBinding(params, "isStep", {
   label: "是否分级渲染",
+});
+pane.addBinding(params, "threshold", {
+  label: "阈值过滤",
+  min: 0,
+  max: 1,
+  step: 0.01,
 });
 
 // 绘制
@@ -64,6 +71,7 @@ const draw = (gl: WebGL2RenderingContext, programInfo: twgl.ProgramInfo) => {
         u_ColorTexture: texture.colorTexture,
         u_IsStep: params.isStep,
         u_Time: params.time,
+        u_Threshold: params.threshold,
         clampColors: [
           { stop: 0.0, color: getColor(0.0) },
           { stop: 0.1, color: getColor(0.1) },

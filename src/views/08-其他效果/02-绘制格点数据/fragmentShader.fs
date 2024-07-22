@@ -5,6 +5,7 @@ in vec2 v_Position; // 纹理坐标
 uniform sampler2D u_Texture; // 纹理
 uniform sampler2D u_ColorTexture; // 渐变色颜色纹理
 uniform bool u_IsStep; // 是否分级渲染
+uniform float u_Threshold; // 阈值
 struct clampColor {
   float stop;
   vec4 color;
@@ -15,6 +16,9 @@ out vec4 outColor;
 
 void main() {
   float val = texture(u_Texture, v_Position).r;
+  if(val > u_Threshold) {
+    discard;
+  }
   if(u_IsStep) {
     for(int i = 1; i < 10; i++) {
       if(val >= clampColors[i - 1].stop && val < clampColors[i].stop) {
