@@ -25,7 +25,7 @@ onMounted(() => {
       src: img,
       flipY: 1,
     },
-    (err, tex, img) => {
+    (err, tex) => {
       let uniform = {
         u_Texture: tex,
       };

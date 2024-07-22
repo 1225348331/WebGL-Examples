@@ -38,9 +38,7 @@ export default class WindGL {
   screenProgram: twgl.ProgramInfo;
   updateProgram: twgl.ProgramInfo;
   quadBuffer: twgl.BufferInfo;
-  framebuffer: twgl.FramebufferInfo;
-  // resizeFrameBuffer: twgl.FramebufferInfo;
-  // particlesFrameBuffer: twgl.FramebufferInfo;
+  framebuffer: WebGLFramebuffer;
   backgroundTexture?: WebGLTexture; // 背景纹理
   screenTexture?: WebGLTexture; // 离屏纹理
   colorRampTexture?: WebGLTexture; // 渐变色纹理
@@ -51,7 +49,6 @@ export default class WindGL {
   particleIndexBuffer?: twgl.BufferInfo; // 粒子索引缓冲区
   windData?: WindData;
   windTexture?: WebGLTexture;
-  attachments: any;
 
   constructor(gl: WebGL2RenderingContext) {
     this.gl = gl;
@@ -73,7 +70,8 @@ export default class WindGL {
       },
     });
 
-    this.framebuffer = twgl.createFramebufferInfo(gl);
+    this.framebuffer = gl.createFramebuffer()!;
+
     this.setColorRamp(defaultRampColors);
     this.resize();
   }
@@ -171,31 +169,28 @@ export default class WindGL {
 
   drawScreen() {
     const gl = this.gl;
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer.framebuffer);
+    bindFramebuffer(gl, this.framebuffer, this.screenTexture!);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer.framebuffer);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     // // 绘制纹理
     this.drawTexture(this.backgroundTexture!, this.fadeOpacity);
     // // 绘制粒子
-    // this.drawParticles();
+    this.drawParticles();
 
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    bindFramebuffer(gl, null);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     // // 启用混合以支持在现有背景上绘图
     // // enable blending to support drawing on top of an existing background (e.g. a map)
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    this.drawTexture(this.framebuffer.attachments[0], 1.0);
+    // this.screenTexture = this.framebuffer.attachments[0];
+    this.drawTexture(this.screenTexture!, 1.0);
     gl.disable(gl.BLEND);
     // 将当前屏幕保存为下一帧的背景
     // save the current screen as the background for the next frame
-    let temp = this.framebuffer.attachments[0];
-    // gl.deleteFramebuffer(this.framebuffer.framebuffer);
-    // let a = this
-    this.framebuffer = twgl.createFramebufferInfo(gl, [
-      {
-        attachment: temp,
-      },
-    ]);
+    const temp = this.backgroundTexture;
+    this.backgroundTexture = this.screenTexture;
+    this.screenTexture = temp;
   }
   // 绘制纹理
   drawTexture(texture: WebGLTexture, opacity: number) {
@@ -230,8 +225,8 @@ export default class WindGL {
   // 更新粒子
   updateParticles() {
     const gl = this.gl;
-    // bindFramebuffer(gl, this.framebuffer, this.particleStateTexture1);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer.framebuffer);
+    bindFramebuffer(gl, this.framebuffer, this.particleStateTexture1);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer.framebuffer);
     gl.viewport(0, 0, this.particleStateResolution!, this.particleStateResolution!);
     const programInfo = this.updateProgram;
     gl.useProgram(programInfo.program);
@@ -255,7 +250,6 @@ export default class WindGL {
     const temp = this.particleStateTexture0;
     this.particleStateTexture0 = this.particleStateTexture1;
     this.particleStateTexture1 = temp;
-    twgl.resizeFramebufferInfo(gl, this.framebuffer, this.attachments);
   }
 }
 
@@ -278,20 +272,7 @@ function getColorRamp(colors: { [key: string]: string }) {
   return new Uint8Array(ctx.getImageData(0, 0, 256, 1).data);
 }
 
-// 创建帧缓冲区
-const createFramebufferInfo = (gl: WebGL2RenderingContext, attachment?: WebGLTexture) => {
-  const attachments: twgl.AttachmentOptions[] = [
-    {
-      format: gl.RGBA,
-      type: gl.UNSIGNED_BYTE,
-      min: gl.LINEAR,
-      wrap: gl.CLAMP_TO_EDGE,
-      attachment: attachment,
-    },
-  ];
-  let fbInfo = twgl.createFramebufferInfo(gl, attachments, gl.canvas.width, gl.canvas.width);
-  return fbInfo;
-};
+
 
 function bindFramebuffer(gl: WebGL2RenderingContext, framebuffer: WebGLFramebuffer | null, texture?: WebGLTexture) {
   gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);

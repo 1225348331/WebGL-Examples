@@ -38,8 +38,9 @@ vec2 lookup_wind(const vec2 uv) {
 
 void main() {
   vec4 color = texture(u_particles, v_tex_pos);
-  vec2 pos = vec2(color.r / 255.0f + color.b, color.g / 255.0f + color.a); // decode particle position from pixel RGBA
-
+  // decode particle position from pixel RGBA 从像素rgba处解码粒子位置
+  vec2 pos = vec2(color.r / 255.0f + color.b, color.g / 255.0f + color.a);
+  // 速度
   vec2 velocity = mix(u_wind_min, u_wind_max, lookup_wind(pos));
   float speed_t = length(velocity) / length(u_wind_max);
 

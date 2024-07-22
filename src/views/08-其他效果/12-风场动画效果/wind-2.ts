@@ -38,7 +38,8 @@ export default class WindGL {
   screenProgram: twgl.ProgramInfo;
   updateProgram: twgl.ProgramInfo;
   quadBuffer: twgl.BufferInfo;
-  framebuffer: WebGLFramebuffer;
+  framebuffer: twgl.FramebufferInfo;
+  particleframebuffer?: twgl.FramebufferInfo;
   backgroundTexture?: WebGLTexture; // 背景纹理
   screenTexture?: WebGLTexture; // 离屏纹理
   colorRampTexture?: WebGLTexture; // 渐变色纹理
@@ -70,10 +71,13 @@ export default class WindGL {
       },
     });
 
-    this.framebuffer = gl.createFramebuffer()!;
-
     this.setColorRamp(defaultRampColors);
     this.resize();
+    this.framebuffer = twgl.createFramebufferInfo(gl, [
+      {
+        attachment: this.screenTexture,
+      },
+    ]);
   }
   // 重设尺寸
   resize() {
@@ -169,16 +173,14 @@ export default class WindGL {
 
   drawScreen() {
     const gl = this.gl;
-    bindFramebuffer(gl, this.framebuffer, this.screenTexture!);
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer.framebuffer);
+    twgl.bindFramebufferInfo(gl, this.framebuffer);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     // // 绘制纹理
     this.drawTexture(this.backgroundTexture!, this.fadeOpacity);
     // // 绘制粒子
     this.drawParticles();
 
-    bindFramebuffer(gl, null);
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    twgl.bindFramebufferInfo(gl, null);
     // // 启用混合以支持在现有背景上绘图
     // // enable blending to support drawing on top of an existing background (e.g. a map)
     gl.enable(gl.BLEND);
@@ -189,8 +191,13 @@ export default class WindGL {
     // 将当前屏幕保存为下一帧的背景
     // save the current screen as the background for the next frame
     const temp = this.backgroundTexture;
-    this.backgroundTexture = this.screenTexture;
+    this.backgroundTexture = this.framebuffer.attachments[0];
     this.screenTexture = temp;
+    this.framebuffer = twgl.createFramebufferInfo(gl, [
+      {
+        attachment: this.screenTexture,
+      },
+    ]);
   }
   // 绘制纹理
   drawTexture(texture: WebGLTexture, opacity: number) {
@@ -225,8 +232,13 @@ export default class WindGL {
   // 更新粒子
   updateParticles() {
     const gl = this.gl;
-    bindFramebuffer(gl, this.framebuffer, this.particleStateTexture1);
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer.framebuffer);
+    this.particleframebuffer = twgl.createFramebufferInfo(gl, [
+      {
+        attachment: this.particleStateTexture1,
+      },
+    ]);
+    // bindFramebuffer(gl, this.framebuffer, this.particleStateTexture1);
+    twgl.bindFramebufferInfo(gl, this.particleframebuffer);
     gl.viewport(0, 0, this.particleStateResolution!, this.particleStateResolution!);
     const programInfo = this.updateProgram;
     gl.useProgram(programInfo.program);
@@ -248,7 +260,7 @@ export default class WindGL {
     twgl.drawBufferInfo(gl, this.quadBuffer, gl.TRIANGLES);
     // this.particleStateTexture1 = this.framebuffer.attachments[0];
     const temp = this.particleStateTexture0;
-    this.particleStateTexture0 = this.particleStateTexture1;
+    this.particleStateTexture0 = this.particleframebuffer.attachments[0];
     this.particleStateTexture1 = temp;
   }
 }
@@ -270,13 +282,4 @@ function getColorRamp(colors: { [key: string]: string }) {
   ctx.fillRect(0, 0, 256, 1);
 
   return new Uint8Array(ctx.getImageData(0, 0, 256, 1).data);
-}
-
-
-
-function bindFramebuffer(gl: WebGL2RenderingContext, framebuffer: WebGLFramebuffer | null, texture?: WebGLTexture) {
-  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-  if (texture) {
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-  }
 }

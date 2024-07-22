@@ -1,15 +1,13 @@
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import { getContext } from "@/utils/webgl";
-import * as twgl from "twgl.js";
+
 import WindGL from "./wind";
 import windData from "./data/2016112000.json";
 import img from "./data/2016112000.png";
-import drawVert from "./shaders/drawVertexShader.vs";
-import drawFrag from "./shaders/drawFragmetnShader.fs";
 
 onMounted(() => {
-  const { gl } = getContext();
+  const { gl } = getContext(true);
 
   const wind = new WindGL(gl);
   wind.numParticles = 65536;

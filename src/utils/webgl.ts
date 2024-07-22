@@ -6,8 +6,8 @@ import { onUnmounted } from "vue";
  * @param {string} vs 顶点着色器
  * @param {string} fs 片元着色器
  */
-const initWebGL = (vs: string, fs: string) => {
-  const { gl, canvas } = getContext();
+const initWebGL = (vs: string, fs: string, isFullScreen: boolean = false) => {
+  const { gl, canvas } = getContext(isFullScreen);
   // 创建program
   const programInfo = twgl.createProgramInfo(gl, [vs, fs]);
   // 使用program
@@ -32,14 +32,14 @@ const initWebGL = (vs: string, fs: string) => {
 };
 
 // 获取canvas context 默认webgl2
-const getContext = () => {
+const getContext = (isFullScreen: Boolean = false) => {
   const container = document.querySelector(".ant-layout-content") as HTMLElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
-  const { height } = container.getBoundingClientRect();
-  canvas.width = height - 48;
+  const { height, width } = container.getBoundingClientRect();
+  isFullScreen ? (canvas.width = width - 48) : (canvas.width = height - 48);
   canvas.height = height - 48;
   canvas.style.borderRadius = "6px";
-  const gl = twgl.getContext(canvas, { antialias: false }) as WebGL2RenderingContext;
+  const gl = twgl.getContext(canvas) as WebGL2RenderingContext;
   twgl.resizeCanvasToDisplaySize(canvas);
   return { gl, canvas };
 };
