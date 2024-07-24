@@ -40,11 +40,28 @@ for (let latNum = 0; latNum < latitudeBands; latNum++) {
     indices.push(second, second + 1, first + 1);
   }
 }
-// console.log(positions);
-// console.log(textureCoordData);
-// console.log(indices);
+interface Uniforms {
+  u_Texture: null | WebGLTexture;
+  u_ModelMatrix: mat4;
+  u_ViewMatrix: mat4;
+  u_ProjMatrix: mat4;
+}
+
+let uniforms: Uniforms = {
+  u_Texture: null,
+  u_ModelMatrix: mat4.scale(mat4.create(), mat4.create(), vec3.fromValues(3, 3, 3)),
+  u_ViewMatrix: mat4.lookAt(mat4.create(), vec3.fromValues(4, 0, 0), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 0, 1)),
+  u_ProjMatrix: mat4.perspective(mat4.create(), (120 * Math.PI) / 180, 1, 1, 100),
+};
+
+const draw = (gl: WebGL2RenderingContext, programInfo: twgl.ProgramInfo, bufferInfo: twgl.BufferInfo) => {
+  twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+  twgl.setUniforms(programInfo, uniforms);
+  twgl.drawBufferInfo(gl, bufferInfo);
+};
+
 onMounted(() => {
-  const { gl, programInfo } = initWebGL(vs, fs);
+  const { gl, programInfo, clearGL } = initWebGL(vs, fs);
   const arrays: twgl.Arrays = {
     a_Position: {
       numComponents: 3,
@@ -58,7 +75,6 @@ onMounted(() => {
     indices,
   };
   const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
-  twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
   twgl.createTexture(
     gl,
     {
@@ -66,17 +82,48 @@ onMounted(() => {
       flipY: 1,
     },
     (err, tex) => {
-      let uniforms = {
-        u_Texture: tex,
-        u_ModelMatrix: mat4.scale(mat4.create(), mat4.create(), vec3.fromValues(3, 3, 3)),
-        u_ViewMatrix: mat4.lookAt(mat4.create(), vec3.fromValues(4, 0, 0), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 0, 1)),
-        u_ProjMatrix: mat4.perspective(mat4.create(), (120 * Math.PI) / 180, 1, 1, 100),
-      };
-      twgl.setUniforms(programInfo, uniforms);
-      twgl.drawBufferInfo(gl, bufferInfo);
-      console.log("绘制成功");
+      uniforms.u_Texture = tex;
+      draw(gl, programInfo, bufferInfo);
     }
   );
+  // 拖拽变量
+  let dragging = false;
+  let lastX = -1;
+  let lastY = -1;
+  let currentAngle: number[] = [0, 0];
+  let canvas = document.querySelector("canvas") as HTMLCanvasElement;
+
+  canvas.onmousedown = (e) => {
+    let x = e.clientX;
+    let y = e.clientY;
+    let rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+    if (rect.left <= x && x < rect.right && rect.top <= y && y < rect.bottom) {
+      lastX = x;
+      lastY = y;
+      dragging = true;
+    }
+  };
+  canvas.onmouseup = () => {
+    dragging = false;
+  };
+  canvas.onmousemove = (e) => {
+    let x = e.clientX;
+    let y = e.clientY;
+    if (dragging) {
+      var factor = 100 / canvas.height; // The rotation ratio
+      var dx = factor * (x - lastX);
+      var dy = factor * (y - lastY);
+      currentAngle[0] = Math.max(Math.min(currentAngle[0] + dy, 90.0), -90.0); // 将沿Y轴旋转的角度控制在-90到90度之间
+      currentAngle[1] += dx;
+      mat4.rotateZ(uniforms.u_ModelMatrix, mat4.create(), (currentAngle[1] * Math.PI) / 180);
+      mat4.rotateY(uniforms.u_ModelMatrix, uniforms.u_ModelMatrix, (currentAngle[0] * Math.PI) / 180);
+      mat4.scale(uniforms.u_ModelMatrix, uniforms.u_ModelMatrix, vec3.fromValues(3, 3, 3));
+      clearGL();
+      draw(gl, programInfo, bufferInfo);
+    }
+    lastX = x;
+    lastY = y;
+  };
 });
 </script>
 <template>
