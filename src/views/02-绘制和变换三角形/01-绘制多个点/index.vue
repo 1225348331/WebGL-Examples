@@ -14,7 +14,7 @@ onMounted(() => {
   };
   // 创建缓冲区信息
   const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
-  // 设置缓冲区和属性
+  // 设置缓冲区和属性 
   twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
   twgl.drawBufferInfo(gl, bufferInfo, gl.POINTS);
 });

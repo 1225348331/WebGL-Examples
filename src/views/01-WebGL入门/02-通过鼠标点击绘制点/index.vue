@@ -24,11 +24,17 @@ onMounted(() => {
   const { gl, programInfo } = initWebGL(VSHADER_SOURCE, FSHADER_SOURCE);
   // canvas点击事件
   document.querySelector("canvas")?.addEventListener("click", (e) => {
-    let x = e.clientX; // 鼠标点击处的x坐标
-    let y = e.clientY; // 鼠标点击出的y坐标
-    const rect = (e.target as HTMLCanvasElement)?.getBoundingClientRect(); // canvas位置及长宽信息
-    x = (x - rect.left - rect.width / 2) / (rect.width / 2); // webgl x坐标
-    y = (rect.height / 2 - (y - rect.top)) / (rect.height / 2); // webgl y坐标
+    // 鼠标点击处的位置
+    const { clientX, clientY } = e;
+    // canvas 位置 宽高
+    const { left, top, width, height } = (e.target as HTMLElement).getBoundingClientRect();
+    // 鼠标点击的canvas坐标
+    const [clickX, clickY] = [clientX - left, clientY - top];
+    // 解决坐标原点位置的差异
+    const [xbaseCenter, ybaseCenter] = [clickX - width / 2, clickY - height / 2];
+    // 解决坐标基底的差异 和 y方向上的差异
+    const [x, y] = [(xbaseCenter / width) * 2, (-ybaseCenter / height) * 2];
+
     arrays.push([x, y]); // 将坐标存储到顶点变量中
     // 清除颜色缓冲区
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

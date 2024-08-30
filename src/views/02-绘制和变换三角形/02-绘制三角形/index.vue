@@ -11,7 +11,7 @@ onMounted(() => {
   // 顶点坐标
   let arrays: twgl.Arrays = {
     a_Position: { numComponents: 2, data: [-0.2, 0.3, -0.2, -0.1, 0.2, 0.3, -0.2, -0.2, 0.2, -0.2, 0.2, 0.1] },
-  };
+  }; 
   // 创建缓冲区信息
   const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
   // 设置缓冲区和属性
