@@ -38,9 +38,15 @@ onMounted(() => {
     collection.push(targetObj);
   };
 
+  canvas.oncontextmenu = () => {
+    return false;
+  };
+
   // 渲染函数
   const render = () => {
     clearGL();
+    let vertices: number[] = [];
+
     collection.forEach(({ x, y, alpha }) => {
       let arributeObj: twgl.Arrays = {
         a_Position: { numComponents: 2, data: [x, y] },
@@ -48,9 +54,22 @@ onMounted(() => {
       let uniforms = {
         u_Alpha: alpha,
       };
+      vertices.push(x, y);
       // 绘制点
       drawPoint(gl, programInfo, arributeObj, uniforms);
     });
+
+    let attributesObj: twgl.Arrays = {
+      a_Position: { numComponents: 2, data: vertices },
+    };
+    let uniforms = {
+      u_Alpha: 1.0,
+    };
+    // 绘制点
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, attributesObj);
+    twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+    twgl.setUniforms(programInfo, uniforms);
+    twgl.drawBufferInfo(gl, bufferInfo, gl.LINE_STRIP);
   };
 
   // 动画函数
