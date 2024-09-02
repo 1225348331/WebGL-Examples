@@ -197,6 +197,7 @@ let uniforms: Uniforms = {
 let dragging = false;
 let lastX = -1;
 let lastY = -1;
+let currentAngle = [0, 0];
 
 const draw = (gl: WebGL2RenderingContext, programInfo: twgl.ProgramInfo) => {
   // 创建缓冲区
@@ -216,6 +217,7 @@ onMounted(() => {
     // 绘制图形
     draw(gl, programInfo);
   });
+
   canvas.onmousedown = (e) => {
     let x = e.clientX;
     let y = e.clientY;
@@ -236,9 +238,11 @@ onMounted(() => {
       var factor = 100 / canvas.height; // The rotation ratio
       var dx = factor * (x - lastX);
       var dy = factor * (y - lastY);
-      mat4.rotateY(uniforms.u_ModelMatrix, uniforms.u_ModelMatrix, (dx * Math.PI) / 180);
-      mat4.rotateX(uniforms.u_ModelMatrix, uniforms.u_ModelMatrix, (dy * Math.PI) / 180);
-
+      // 绕X轴旋转 限制在-90，90
+      currentAngle[0] = Math.max(Math.min(currentAngle[0] + dy, 90), -90);
+      currentAngle[1] += dx;
+      mat4.rotateX(uniforms.u_ModelMatrix, mat4.create(), (currentAngle[0] * Math.PI) / 180);
+      mat4.rotateY(uniforms.u_ModelMatrix, uniforms.u_ModelMatrix, (currentAngle[1] * Math.PI) / 180);
       draw(gl, programInfo);
     }
     lastX = x;

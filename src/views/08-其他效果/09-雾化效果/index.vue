@@ -2,7 +2,7 @@
 import * as twgl from "twgl.js";
 import VSHADER_SOURCE from "./vertexShader.vs";
 import FSHADER_SOURCE from "./fragmentShader.fs";
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { mat4, vec3, vec4 } from "gl-matrix";
 import { initWebGL } from "@/utils/webgl";
 import { Pane } from "tweakpane";
@@ -334,6 +334,10 @@ onMounted(() => {
     clearGL();
     draw(gl, programInfo);
   });
+});
+
+onUnmounted(() => {
+  pane.dispose();
 });
 </script>
 <template>
